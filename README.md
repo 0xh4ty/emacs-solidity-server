@@ -1,5 +1,5 @@
 # Emacs Solidity Server
-![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg) ![Built with Rust](https://img.shields.io/badge/Built_with-Rust-black.svg?logo=rust) ![Editor Support](https://img.shields.io/badge/Editor-Emacs-purple.svg?logo=gnu-emacs)
+![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg) ![Built with Rust](https://img.shields.io/badge/Built_with-Rust-purple.svg?logo=rust) ![Editor Support](https://img.shields.io/badge/Editor-Emacs-purple.svg?logo=gnu-emacs)
 
 Emacs Solidity Server is a fast Solidity language server written in Rust. It’s built for Emacs users who want precise go-to-definition and seamless remapping support without the bloat of a full IDE.
 
@@ -23,7 +23,7 @@ Most existing Solidity LSPs either break under real audit setups or bury you in 
 * Diagnostics directly from `solc` compiler
 * Pragma-aware version resolution with persistent caching
 * Import remapping with support for common layouts
-* Works out of the box with **Foundry** and **Hardhat**
+* Works out of the box with **Foundry**,  **Hardhat** and **Truffle**
 * Written in safe Rust with minimal runtime dependencies
 
 > Use it alongside [`solidity-mode`](https://github.com/ethereum/emacs-solidity) for syntax highlighting and tight Emacs integration.
