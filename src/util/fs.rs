@@ -57,6 +57,8 @@ pub fn run_solc(
         }
     });
 
+    log_to_file(&format!("Standard JSON input:\n{}", input_json.to_string()));
+
     let solc_binary = get_solc_binary_from_cache(source_path, project_root)?;
 
     log_to_file(&format!("Using solc binary: {}", solc_binary.to_string_lossy()));

@@ -60,6 +60,10 @@ pub fn parse_foundry_toml(path: &Path) -> Vec<Remapping> {
     remappings
 }
 
+fn has_hardhat_config(root: &Path) -> bool {
+    root.join("hardhat.config.js").exists() || root.join("hardhat.config.ts").exists()
+}
+
 pub fn parse_remappings(project_root: &Path) -> Vec<Remapping> {
     let mut seen = HashSet::new();
     let mut all = vec![];
@@ -73,6 +77,17 @@ pub fn parse_remappings(project_root: &Path) -> Vec<Remapping> {
             all.push(rem);
         }
     }
+    // If hardhat.config.js or hardhat.config.ts exists
+    if has_hardhat_config(project_root) {
+        let node_modules_remap = Remapping {
+            prefix: "@".to_string(),
+            target: PathBuf::from("node_modules/@"),
+        };
 
+        let key = format!("{}={}", node_modules_remap.prefix, node_modules_remap.target.display());
+        if seen.insert(key) {
+            all.push(node_modules_remap);
+        }
+    }
     all
 }

@@ -7,6 +7,6 @@ pub fn log_to_file(_msg: &str) {
 //        .append(true)
 //        .open("/tmp/emacs-solidity-server.log")
 //    {
-//        let _ = writeln!(file, "{}", msg);
+//        let _ = writeln!(file, "{}", _msg);
 //    }
 }
