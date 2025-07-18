@@ -22,6 +22,7 @@ use crate::util::position::{byte_offset_to_position, position_to_byte_offset};
 use crate::util::text::extract_identifier_at;
 use once_cell::sync::OnceCell;
 use std::sync::Arc;
+use crate::solc::platform::get_platform_id;
 
 pub static SOLC_MANAGER: OnceCell<Arc<SolcManager>> = OnceCell::new();
 
@@ -43,15 +44,21 @@ pub fn handle_request(request: &str) -> Option<String> {
 
                 let list_path = cache_dir.join("list.json");
 
-                // Download list.json if not present
-                let url = "https://binaries.soliditylang.org/linux-amd64/list.json";
+                let platform = get_platform_id();
+                let url = format!(
+                    "https://binaries.soliditylang.org/{}/list.json",
+                    platform
+                );
 
                 loop {
-                    match crate::solc::fetch::download_to_file(url, &list_path) {
-                        Ok(_) => break, // success: exit loop
+                    match crate::solc::fetch::download_to_file(&url, &list_path) {
+                        Ok(_) => break,
                         Err(e) => {
-                            log_to_file(&format!("[solc-sync] Failed to download list.json, retrying: {:?}", e));
-                            thread::sleep(Duration::from_secs(5)); // retry after delay
+                            log_to_file(&format!(
+                                "[solc-sync] Failed to download list.json, retrying: {:?}",
+                                e
+                            ));
+                            thread::sleep(Duration::from_secs(5));
                         }
                     }
                 }
@@ -60,7 +67,10 @@ pub fn handle_request(request: &str) -> Option<String> {
                     let manager = Arc::new(SolcManager::new(cache_dir.clone(), list));
 
                     if let Err(err) = manager.ensure_latest_versions() {
-                        log_to_file(&format!("[solc-sync] Error ensuring solc versions: {:?}", err));
+                        log_to_file(&format!(
+                            "[solc-sync] Error ensuring solc versions: {:?}",
+                            err
+                        ));
                     } else {
                         log_to_file("[solc-sync] Successfully ensured latest solc versions");
                     }
