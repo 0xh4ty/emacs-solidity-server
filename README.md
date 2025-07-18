@@ -95,7 +95,6 @@ target/release/emacs-solidity-server
 * Neovim support
 * Hover info and auto-completion
 * Enhanced syntax integration
-* Support for Truffle and Brownie project structures
 
 ---
 
