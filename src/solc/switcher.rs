@@ -29,14 +29,13 @@ pub fn extract_pragma(source_path: &Path) -> Result<Pragma> {
                 .trim()
                 .trim_end_matches(';');
 
-            // If '=' is present anywhere, treat it as exact — take the first version only
+            // If '=' is present anywhere, treat as exact — take the first version
             if rest.contains('=') {
-                // Capture the first valid version (e.g., from ">=0.8.7 <0.9.0")
                 let first = rest
                     .split_whitespace()
                     .next()
                     .and_then(|token| {
-                        token.trim_start_matches(|c: char| !c.is_digit(10)).parse().ok()
+                        token.trim_start_matches(|c: char| !c.is_ascii_digit()).parse().ok()
                     });
 
                 if let Some(v) = first {
@@ -44,9 +43,17 @@ pub fn extract_pragma(source_path: &Path) -> Result<Pragma> {
                 } else {
                     return Err(anyhow::anyhow!("Could not parse exact version from: '{}'", rest));
                 }
-            } else {
-                return Ok(Pragma::Range(VersionReq::parse(rest)?));
             }
+
+            // If the line starts with a version number (no operator), treat it as exact
+            if rest.chars().next().map_or(false, |c| c.is_ascii_digit()) {
+                let version = Version::parse(rest)
+                    .with_context(|| format!("Parsing version as exact: '{}'", rest))?;
+                return Ok(Pragma::Exact(version));
+            }
+
+            // Otherwise, parse as a range
+            return Ok(Pragma::Range(VersionReq::parse(rest)?));
         }
     }
 
