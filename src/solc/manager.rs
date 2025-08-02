@@ -38,6 +38,41 @@ impl SolcManager {
         Ok(())
     }
 
+    pub fn clean_unused_exact_versions(&self) -> Result<()> {
+        let exact_cache_dir = dirs::cache_dir()
+            .unwrap_or_else(|| PathBuf::from(".cache"))
+            .join("emacs-solidity-server/solc-exact");
+
+        if !exact_cache_dir.exists() {
+            return Ok(()); // nothing to clean
+        }
+
+        let now = std::time::SystemTime::now();
+        let retention_period = std::time::Duration::from_secs(30 * 24 * 60 * 60); // 30 days
+
+        for entry in fs::read_dir(&exact_cache_dir)? {
+            let entry = entry?;
+            let path = entry.path();
+
+            if !path.is_file() {
+                continue;
+            }
+
+            let metadata = fs::metadata(&path)?;
+            let modified = metadata.modified().or_else(|_| metadata.accessed())?;
+
+            if now.duration_since(modified).unwrap_or_default() > retention_period {
+                let _ = fs::remove_file(&path);
+                log_to_file(&format!(
+                    "[solc-prune] Removed unused exact binary: {}",
+                    path.display()
+                ));
+            }
+        }
+
+        Ok(())
+    }
+
     pub fn get_binary_path(&self, version: &str) -> Option<PathBuf> {
         let path = self.cache_dir.join(format!("solc-{}", version));
         if path.exists() {

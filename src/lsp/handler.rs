@@ -75,6 +75,13 @@ pub fn handle_request(request: &str) -> Option<String> {
                         log_to_file("[solc-sync] Successfully ensured latest solc versions");
                     }
 
+                    if let Err(err) = manager.clean_unused_exact_versions() {
+                        log_to_file(&format!(
+                            "[solc-prune] Error cleaning solc-exact: {:?}",
+                            err
+                        ));
+                    }
+
                     if SOLC_MANAGER.set(manager.clone()).is_err() {
                         log_to_file("[solc-sync] SOLC_MANAGER already set");
                     }
