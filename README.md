@@ -1,6 +1,8 @@
 # Emacs Solidity Server
 ![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg) ![Built with Rust](https://img.shields.io/badge/Built_with-Rust-purple.svg?logo=rust) ![Editor Support](https://img.shields.io/badge/Editor-Emacs-purple.svg?logo=gnu-emacs)
 
+![Emacs Solidity Server Demo](assets/emacs_solidity_server.gif)
+
 Emacs Solidity Server is a fast Solidity language server written in Rust. It’s built for Emacs users who want precise go-to-definition and seamless remapping support without the bloat of a full IDE.
 
 > Two things to note:<br>
